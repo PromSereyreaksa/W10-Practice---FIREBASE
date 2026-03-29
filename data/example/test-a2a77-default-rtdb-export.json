@@ -76,5 +76,23 @@
       "imageUrl": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=300&h=300&fit=crop&q=80",
       "likes": 6
     }
+  },
+  "comments": {
+    "artist_1": {
+      "comment_1": {
+        "message": "Great stage presence and strong energy.",
+        "createdAt": "2026-03-28T10:00:00.000Z"
+      },
+      "comment_2": {
+        "message": "The songs on this profile are very catchy.",
+        "createdAt": "2026-03-29T03:30:00.000Z"
+      }
+    },
+    "artist_2": {
+      "comment_1": {
+        "message": "Very smooth vocals and nice pop sound.",
+        "createdAt": "2026-03-27T07:45:00.000Z"
+      }
+    }
   }
 }

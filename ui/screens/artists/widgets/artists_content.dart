@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
  
 import '../../../../model/artist/artist.dart';
+import '../../artist/artist_screen.dart';
 import '../../../theme/theme.dart';
 import '../../../utils/async_value.dart';
 import '../../../widgets/song/artist_tile.dart';
@@ -38,7 +39,17 @@ class ArtistsContent extends StatelessWidget {
           child: ListView.builder(
             physics: AlwaysScrollableScrollPhysics(),
             itemCount: artists.length,
-            itemBuilder: (context, index) => ArtistTile(artist: artists[index]),
+            itemBuilder: (context, index) => ArtistTile(
+              artist: artists[index],
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ArtistScreen(artist: artists[index]),
+                  ),
+                );
+              },
+            ),
           ),
         );
         break;
@@ -50,7 +61,7 @@ class ArtistsContent extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(height: 16),
-          Text("Library", style: AppTextStyles.heading),
+          Text("Artists", style: AppTextStyles.heading),
           SizedBox(height: 50),
 
           Expanded(child: content),
