@@ -15,15 +15,21 @@ class LibraryContent extends StatelessWidget {
     LibraryViewModel mv = context.watch<LibraryViewModel>();
 
     AsyncValue<List<LibraryItemData>> asyncValue = mv.data;
+    final Object? likeSongError = mv.likeSongError;
 
     Widget content;
     switch (asyncValue.state) {
-      
       case AsyncValueState.loading:
         content = Center(child: CircularProgressIndicator());
         break;
       case AsyncValueState.error:
-        content = Center(child: Text('error = ${asyncValue.error!}', style: TextStyle(color: Colors.red),));
+        content = Center(
+          child: Text(
+            'error = ${asyncValue.error!}',
+            style: TextStyle(color: Colors.red),
+          ),
+        );
+        break;
 
       case AsyncValueState.success:
         List<LibraryItemData> data = asyncValue.data!;
@@ -35,8 +41,12 @@ class LibraryContent extends StatelessWidget {
             onTap: () {
               mv.start(data[index].song);
             },
+            onLikeTap: () {
+              mv.likeSong(data[index].song);
+            },
           ),
         );
+        break;
     }
 
     return Padding(
@@ -46,6 +56,13 @@ class LibraryContent extends StatelessWidget {
         children: [
           SizedBox(height: 16),
           Text("Library", style: AppTextStyles.heading),
+          if (likeSongError != null) ...[
+            SizedBox(height: 16),
+            Text(
+              'Unable to like song: $likeSongError',
+              style: TextStyle(color: Colors.red),
+            ),
+          ],
           SizedBox(height: 50),
 
           Expanded(child: content),

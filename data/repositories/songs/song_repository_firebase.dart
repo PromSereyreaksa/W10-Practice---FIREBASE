@@ -8,9 +8,16 @@ import 'song_repository.dart';
 
 class SongRepositoryFirebase extends SongRepository {
   final Uri songsUri = Uri.https(
-    'test-a2a77-default-rtdb.asia-southeast1.firebasedatabase.app',
+    'week-8-practice-78755-default-rtdb.asia-southeast1.firebasedatabase.app',
     '/songs.json',
   );
+
+  Uri songUri(String songId) {
+    return Uri.https(
+      'week-8-practice-78755-default-rtdb.asia-southeast1.firebasedatabase.app',
+      '/songs/$songId.json',
+    );
+  }
 
   @override
   Future<List<Song>> fetchSongs() async {
@@ -33,4 +40,21 @@ class SongRepositoryFirebase extends SongRepository {
 
   @override
   Future<Song?> fetchSongById(String id) async {}
+
+  @override
+  Future<Song> likeSong(Song song) async {
+    final int updatedLikes = song.likes + 1;
+
+    final http.Response response = await http.patch(
+      songUri(song.id),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({SongDto.likesKey: updatedLikes}),
+    );
+
+    if (response.statusCode == 200) {
+      return song.copyWith(likes: updatedLikes);
+    } else {
+      throw Exception('Failed to like song');
+    }
+  }
 }
