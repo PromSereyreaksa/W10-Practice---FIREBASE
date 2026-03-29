@@ -7,6 +7,8 @@ import '../../dtos/song_dto.dart';
 import 'song_repository.dart';
 
 class SongRepositoryFirebase extends SongRepository {
+  List<Song>? _cachedSongs;
+
   final Uri songsUri = Uri.https(
     'week-8-practice-78755-default-rtdb.asia-southeast1.firebasedatabase.app',
     '/songs.json',
@@ -20,7 +22,15 @@ class SongRepositoryFirebase extends SongRepository {
   }
 
   @override
-  Future<List<Song>> fetchSongs() async {
+  Future<List<Song>> fetchSongs({bool forceFetch = false}) async {
+    if (forceFetch) {
+      _cachedSongs = null;
+    }
+
+    if (_cachedSongs != null) {
+      return _cachedSongs!;
+    }
+
     final http.Response response = await http.get(songsUri);
 
     if (response.statusCode == 200) {
@@ -31,6 +41,7 @@ class SongRepositoryFirebase extends SongRepository {
       for (final entry in songJson.entries) {
         result.add(SongDto.fromJson(entry.key, entry.value));
       }
+      _cachedSongs = result;
       return result;
     } else {
       // 2- Throw expcetion if any issue
@@ -52,7 +63,19 @@ class SongRepositoryFirebase extends SongRepository {
     );
 
     if (response.statusCode == 200) {
-      return song.copyWith(likes: updatedLikes);
+      final Song updatedSong = song.copyWith(likes: updatedLikes);
+
+      if (_cachedSongs != null) {
+        _cachedSongs = _cachedSongs!.map((Song cachedSong) {
+          if (cachedSong.id != updatedSong.id) {
+            return cachedSong;
+          }
+
+          return updatedSong;
+        }).toList();
+      }
+
+      return updatedSong;
     } else {
       throw Exception('Failed to like song');
     }
